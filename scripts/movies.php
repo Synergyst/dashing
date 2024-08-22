@@ -78,6 +78,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 15px;
             border: 1px solid #2b2d31;
             border-radius: 5px;
+            cursor: pointer; /* Add this line to indicate clickability */
         }
         .vod-list a {
             text-decoration: none;
@@ -133,9 +134,9 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <ul class="vod-list">
         <?php if (count($vod_list) > 0): ?>
             <?php foreach ($vod_list as $vod): ?>
-                <li>
+                <li onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
                     <strong><?php echo htmlspecialchars($vod['title']); ?></strong><br>
-                    <a onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')"><?php echo htmlspecialchars($vod['url']); ?></a>
+                    <a><?php echo htmlspecialchars($vod['url']); ?></a>
                 </li>
             <?php endforeach; ?>
         <?php else: ?>
