@@ -28,7 +28,8 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            //margin: 20px;
             padding: 0;
             background-color: #1e1f22;
         }
@@ -105,6 +106,42 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             height: 100%;
             //object-fit: cover; /* Ensures the video covers the entire area */
         }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        .tiles-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .tile {
+            flex: 1 0 300px;
+            background-color: #313338;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+
+            margin-bottom: 10px;
+            border: 1px solid #2b2d31;
+            cursor: pointer;
+        }
+        .tile:hover {
+            transform: scale(1.05);
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -131,18 +168,30 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <input type="submit" value="Search">
         </form>
     </div>
-    <ul class="vod-list">
+
+
+    <main>
+        <section class="tiles-container">
+        <ul class="vod-list">
         <?php if (count($vod_list) > 0): ?>
             <?php foreach ($vod_list as $vod): ?>
-                <li onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
+            <div class="tile" onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
+            <!--<div class="tile">
+                <li onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">-->
                     <strong><?php echo htmlspecialchars($vod['title']); ?></strong><br>
                     <a><?php echo htmlspecialchars($vod['url']); ?></a>
-                </li>
+                <!--</li>-->
+            </div>
             <?php endforeach; ?>
         <?php else: ?>
             <li>No VODs found.</li>
         <?php endif; ?>
-    </ul>
+        </ul>
+        </section>
+    </main>
+
+
+
     <div id="video-container">
         <video id="example-video" class="video-js vjs-default-skin" controls></video>
     </div>
