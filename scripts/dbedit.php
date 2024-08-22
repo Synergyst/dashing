@@ -17,26 +17,103 @@ function addMissingColumn($db, $column_name, $column_type) {
     }
 }
 
-// Check and add missing columns
-addMissingColumn($db, 'cover_art', 'TEXT');
-addMissingColumn($db, 'summary', 'TEXT');
+// Get existing columns
+$result = $db->query("PRAGMA table_info(vod_urls)");
+$columns = $result->fetchAll(PDO::FETCH_ASSOC);
+
+// Handle adding a new column
+if (isset($_GET['action']) && $_GET['action'] == 'add_column') {
+    if (!empty($_GET['new_column_name']) && !empty($_GET['new_column_type'])) {
+        addMissingColumn($db, $_GET['new_column_name'], $_GET['new_column_type']);
+        //header("Location: " . strtok($_SERVER["REQUEST_URI"], '?')); // Refresh page to update the form
+        echo '
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .message {
+            font-size: 24px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="message">
+        Success!<br>
+        You will be redirected to the homepage in 3 seconds...
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the current protocol and host (base URL)
+            const protocol = window.location.protocol;
+            const host = window.location.host;
+
+            // Construct the base URL
+            const baseURL = `${protocol}//${host}/`;
+
+            // Redirect after 3 seconds
+            setTimeout(function() {
+                window.location.href = baseURL;
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
+';
+        exit();
+    }
+}
 
 // Handle adding or editing entries
 if (isset($_GET['action']) && $_GET['action'] == 'save') {
+    $query = "";
+    $params = [];
+
     if (isset($_GET['id']) && !empty($_GET['id'])) {
         // Update existing entry
-        $stmt = $db->prepare("UPDATE vod_urls SET title = :title, url = :url, cover_art = :cover_art, summary = :summary WHERE id = :id");
-        $stmt->bindParam(':id', $_GET['id']);
+        $query = "UPDATE vod_urls SET ";
+        foreach ($columns as $column) {
+            if ($column['name'] != 'id') {
+                $query .= $column['name'] . " = :{$column['name']}, ";
+                $params[":{$column['name']}"] = $_GET[$column['name']];
+            }
+        }
+        $query = rtrim($query, ', ') . " WHERE id = :id";
+        $params[':id'] = $_GET['id'];
     } else {
         // Insert new entry
-        $stmt = $db->prepare("INSERT INTO vod_urls (title, url, cover_art, summary) VALUES (:title, :url, :cover_art, :summary)");
+        $query = "INSERT INTO vod_urls (";
+        foreach ($columns as $column) {
+            if ($column['name'] != 'id') {
+                $query .= $column['name'] . ", ";
+            }
+        }
+        $query = rtrim($query, ', ') . ") VALUES (";
+        foreach ($columns as $column) {
+            if ($column['name'] != 'id') {
+                $query .= ":{$column['name']}, ";
+                $params[":{$column['name']}"] = $_GET[$column['name']];
+            }
+        }
+        $query = rtrim($query, ', ') . ")";
     }
     
-    $stmt->bindParam(':title', $_GET['title']);
-    $stmt->bindParam(':url', $_GET['url']);
-    $stmt->bindParam(':cover_art', $_GET['cover_art']);
-    $stmt->bindParam(':summary', $_GET['summary']);
-    $stmt->execute();
+    $stmt = $db->prepare($query);
+    $stmt->execute($params);
 }
 
 // Handle deletion of an entry
@@ -73,33 +150,55 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <form method="get" action="">
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="id" value="<?php echo isset($_GET['id']) ? htmlspecialchars($_GET['id']) : ''; ?>">
-    <label>Title: <input type="text" name="title" required value="<?php echo isset($_GET['title']) ? htmlspecialchars($_GET['title']) : ''; ?>"></label><br><br>
-    <label>URL: <input type="text" name="url" required value="<?php echo isset($_GET['url']) ? htmlspecialchars($_GET['url']) : ''; ?>"></label><br><br>
-    <label>Cover Art URL: <input type="text" name="cover_art" value="<?php echo isset($_GET['cover_art']) ? htmlspecialchars($_GET['cover_art']) : ''; ?>"></label><br><br>
-    <label>Summary: <textarea name="summary"><?php echo isset($_GET['summary']) ? htmlspecialchars($_GET['summary']) : ''; ?></textarea></label><br><br>
+    
+    <?php foreach ($columns as $column): ?>
+        <?php if ($column['name'] != 'id'): ?>
+            <label><?php echo htmlspecialchars($column['name']); ?>: 
+                <?php if ($column['type'] == 'TEXT'): ?>
+                    <input type="text" name="<?php echo htmlspecialchars($column['name']); ?>" value="<?php echo isset($_GET[$column['name']]) ? htmlspecialchars($_GET[$column['name']]) : ''; ?>">
+                <?php elseif ($column['type'] == 'INTEGER'): ?>
+                    <input type="number" name="<?php echo htmlspecialchars($column['name']); ?>" value="<?php echo isset($_GET[$column['name']]) ? htmlspecialchars($_GET[$column['name']]) : ''; ?>">
+                <?php endif; ?>
+            </label><br><br>
+        <?php endif; ?>
+    <?php endforeach; ?>
+
     <input type="submit" value="Save">
+</form>
+
+<h2>Add New Column</h2>
+<form method="get" action="">
+    <input type="hidden" name="action" value="add_column">
+    <label>Column Name: <input type="text" name="new_column_name" required></label><br><br>
+    <label>Column Type: 
+        <select name="new_column_type" required>
+            <option value="TEXT">TEXT</option>
+            <option value="INTEGER">INTEGER</option>
+            <option value="REAL">REAL</option>
+            <option value="BLOB">BLOB</option>
+        </select>
+    </label><br><br>
+    <input type="submit" value="Add Column">
 </form>
 
 <h2>Current VOD Entries</h2>
 <table>
     <thead>
         <tr>
-            <th>Title</th>
-            <th>URL</th>
-            <th>Cover Art URL</th>
-            <th>Summary</th>
+            <?php foreach ($columns as $column): ?>
+                <th><?php echo htmlspecialchars($column['name']); ?></th>
+            <?php endforeach; ?>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         <?php foreach ($vod_list as $vod): ?>
             <tr>
-                <td><?php echo htmlspecialchars($vod['title']); ?></td>
-                <td><?php echo htmlspecialchars($vod['url']); ?></td>
-                <td><?php echo htmlspecialchars($vod['cover_art']); ?></td>
-                <td><?php echo htmlspecialchars($vod['summary']); ?></td>
+                <?php foreach ($columns as $column): ?>
+                    <td><?php echo htmlspecialchars($vod[$column['name']]); ?></td>
+                <?php endforeach; ?>
                 <td>
-                    <a href="?action=edit&id=<?php echo $vod['id']; ?>&title=<?php echo urlencode($vod['title']); ?>&url=<?php echo urlencode($vod['url']); ?>&cover_art=<?php echo urlencode($vod['cover_art']); ?>&summary=<?php echo urlencode($vod['summary']); ?>">Edit</a> |
+                    <a href="?action=edit&id=<?php echo $vod['id']; ?><?php foreach ($columns as $column) { if ($column['name'] != 'id') { echo '&' . urlencode($column['name']) . '=' . urlencode($vod[$column['name']]); } } ?>">Edit</a> |
                     <a href="?action=delete&id=<?php echo $vod['id']; ?>" onclick="return confirm('Are you sure you want to delete this entry?');">Delete</a>
                 </td>
             </tr>

@@ -66,7 +66,8 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             cursor: pointer;
         }
         .vod-list {
-            max-width: 600px;
+            //max-width: 600px;
+            max-width: 100%;
             margin: 0 auto;
             padding: 0;
             list-style-type: none;

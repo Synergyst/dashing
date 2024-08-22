@@ -1,3 +1,3 @@
 # dashing
 
-![dashing](https://raw.githubusercontent.com/Synergyst/dashing/main/favicon.ico)
+![dashing](https://github.com/[username]/[reponame]/blob/[branch]/favicon.ico?raw=true)
