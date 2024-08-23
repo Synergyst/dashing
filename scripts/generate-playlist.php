@@ -26,7 +26,7 @@ foreach ($vod_list as $vod) {
     //$playlist_content .= '      <image>' . htmlspecialchars($vod['cover_art_url']) . '</image>' . "\n";
     if (htmlspecialchars($vod['cover_art_url']) == "http://watch.exp.lan/favicon.png" || htmlspecialchars($vod['cover_art_url']) == "") {
         if (!(str_contains(htmlspecialchars($vod['title']), 'Bonus') || str_contains(htmlspecialchars($vod['title']), 'Disc') || str_contains(htmlspecialchars($vod['title']), 'Bloopers'))) {
-            $full_cmd_str = $thumb_url_scraper_exec . htmlspecialchars($vod['title']) . "' " . htmlspecialchars($vod['vod_dir']);
+            $full_cmd_str = $thumb_url_scraper_exec . htmlspecialchars($vod['title']) . "' '" . htmlspecialchars($vod['vod_dir']) . "' '" . $base_dash_url . "'";
             //echo $full_cmd_str . "\n ";
             $cmd_exec_out = str_replace($base_dash_path, "", shell_exec($full_cmd_str));
             //echo $cmd_exec_out . " \n";
