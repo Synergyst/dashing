@@ -119,19 +119,29 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .tiles-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 10px;
         }
         .tile {
             flex: 1 0 300px;
             background-color: #313338;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            //padding: 20px;
+            padding-left: 10px;
+            padding-right: 5px;
+            padding-top: 10px;
+            padding-bottom: 10px;
             border-radius: 10px;
             transition: transform 0.3s ease-in-out;
 
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border: 1px solid #2b2d31;
             cursor: pointer;
+            text-align: center;
+            word-wrap: normal;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
         }
         .tile:hover {
             transform: scale(1.05);
@@ -141,6 +151,10 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             color: #fff;
             text-align: center;
             padding: 10px;
+        }
+        .vod-list-img:hover {
+            height: 256px;
+            width: 256px;
         }
     </style>
 </head>
@@ -176,11 +190,9 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php if (count($vod_list) > 0): ?>
             <?php foreach ($vod_list as $vod): ?>
             <div class="tile" onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
-            <!--<div class="tile">
-                <li onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">-->
-                    <strong><?php echo htmlspecialchars($vod['title']); ?></strong><br>
-                    <a><?php echo htmlspecialchars($vod['url']); ?></a>
-                <!--</li>-->
+                <strong><?php echo htmlspecialchars($vod['title']); ?></strong><br>
+                <!--<a><?php echo htmlspecialchars($vod['url']); ?></a>-->
+                <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.ico') { echo $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%;'; } else { echo $cover_art_url . '\'); height:139px;width:139px;background-size:100% 100%;'; } ?>"></div>
             </div>
             <?php endforeach; ?>
         <?php else: ?>

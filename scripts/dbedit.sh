@@ -3,7 +3,7 @@
 #echo "Content-Type: text/plain"
 echo "Content-Type: text/html"
 echo ""
-#php /opt/stream/scripts/list.php
+php /opt/stream/scripts/list.php
 #php /opt/stream/scripts/generate-playlist.php
 # Extract the value of the 'search' parameter from the QUERY_STRING
 echo "LOG: $QUERY_STRING" >> /opt/stream/log/temp.txt

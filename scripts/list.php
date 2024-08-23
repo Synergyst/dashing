@@ -24,8 +24,14 @@ foreach ($folders as $folder) {
             // Construct the URL
             $url = $base_url . $folder . '/watch.mpd';
 
+            $cover_art = "";
+
+            $cover_art_url = "http://watch.exp.lan/favicon.ico";
+
+            $summary = "";
+
             // Add to the VOD list
-            $vod_list[] = array('title' => $title, 'url' => $url);
+            $vod_list[] = array('title' => $title, 'url' => $url, 'cover_art' => $cover_art, 'cover_art_url' => $cover_art_url, 'summary' => $summary);
         }
     }
 }
@@ -40,15 +46,21 @@ $db = new PDO('sqlite:/opt/stream/db/database.db');
 $db->exec("CREATE TABLE IF NOT EXISTS vod_urls (
     id INTEGER PRIMARY KEY, 
     title TEXT, 
-    url TEXT UNIQUE
+    url TEXT UNIQUE, 
+    cover_art TEXT, 
+    covert_art_url TEXT, 
+    summary TEXT
 )");
 
 // Insert VODs into the database
-$stmt = $db->prepare("INSERT OR IGNORE INTO vod_urls (title, url) VALUES (:title, :url)");
+$stmt = $db->prepare("INSERT OR IGNORE INTO vod_urls (title, url, cover_art, covert_art_url, summary) VALUES (:title, :url, :cover_art, :covert_art_url, :summary)");
 
 foreach ($vod_list as $vod) {
     $stmt->bindParam(':title', $vod['title']);
     $stmt->bindParam(':url', $vod['url']);
+    $stmt->bindParam(':cover_art', $vod['cover_art']);
+    $stmt->bindParam(':cover_art_url', $vod['cover_art_url']);
+    $stmt->bindParam(':summary', $vod['summary']);
     $stmt->execute();
 }
 
