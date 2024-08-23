@@ -142,7 +142,9 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding-left: 10px;
             padding-right: 10px;
             padding-top: 10px;
-            padding-bottom: 30px;
+            padding-bottom: 70px;
+            //padding-bottom: 20px;
+            //padding-bottom: 100px;
             border-radius: 10px;
             transition: transform 0.3s ease-in-out;
 
@@ -150,12 +152,13 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             border: 1px solid #2b2d31;
             cursor: pointer;
             text-align: center;
-            //word-wrap: normal;
             word-wrap: break-word;
             display: block;
             margin-left: auto;
             margin-right: auto;
             width: 50%;
+            background-position: 0% 100%;
+            background-repeat: no-repeat;
         }
         .tile:hover {
             transform: scale(1.75);
@@ -167,10 +170,18 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             text-align: center;
             padding: 10px;
         }
-        .vod-list-img:hover {
+        .vod-list-img {
+            /*background-position: 0% 100%;
+            background-repeat: no-repeat;
+            vertical-align: bottom;
+            display: flex;
+            align-items: flex-end;*/
+            margin-bottom: 10px;
+        }
+        /*.vod-list-img:hover {
             height: 256px;
             width: 256px;
-        }
+        }*/
     </style>
 </head>
 <body>
@@ -207,10 +218,11 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php if (count($vod_list) > 0): ?>
                 <?php foreach ($vod_list as $vod): ?>
                 <div class="tile" onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
-                    <strong><?php echo htmlspecialchars($vod['title']); ?></strong>
-                    <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.png') { echo '/dash/' . $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%;'; } else { echo 'http://watch.exp.lan/favicon.ico' . '\'); height:139px;width:139px;background-size:100% 100%;'; } ?>"></div>
+                    <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.png') { echo $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%; background-position: 0% 100%; background-repeat: no-repeat;'; } else { echo 'http://watch.exp.lan/favicon.ico' . '\'); height:139px;width:139px;background-size:100% 100%; background-position: 0% 100%; background-repeat: no-repeat;'; } ?>"></div>
+                    <!--<div style="background: #313338 url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.png') { echo '/dash/' . $cover_art_url . '\') bottom center no-repeat;height:209px;width:139px;background-size:100% 100%;'; } else { echo 'http://watch.exp.lan/favicon.ico' . '\') bottom center no-repeat; height:139px;width:139px;background-size:100% 100%;'; } ?>"></div>-->
                     <div style="font-size: 12pt;"><?php echo htmlspecialchars($vod['summary']); ?></div>
                     <!--<a><?php echo htmlspecialchars($vod['url']); ?></a>-->
+                    <strong><?php echo htmlspecialchars($vod['title']); ?></strong>
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>

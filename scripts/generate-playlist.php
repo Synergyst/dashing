@@ -34,7 +34,7 @@ foreach ($vod_list as $vod) {
                 // Update the database with the new cover_art_url using a prepared statement
                 $update_stmt = $db->prepare("UPDATE vod_urls SET cover_art_url = :cover_art_url WHERE title = :title");
                 $update_stmt->execute([':cover_art_url' => $cmd_exec_out, ':title' => $vod['title']]);
-                $vod['cover_art_url'] = $cmd_exec_out; // Update the $vod array with the new cover_art_url
+                $vod['cover_art_url'] = $base_dash_url . $cmd_exec_out; // Update the $vod array with the new cover_art_url
             }
         }
     }

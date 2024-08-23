@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+#set -e
 search_str=$(sed 's/ /+/g' <<< "$1")
 curl_exec=$(curl -s "https://www.themoviedb.org/search?query=$search_str")
 #echo "$curl_exec"
