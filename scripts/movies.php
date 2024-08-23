@@ -91,6 +91,12 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             color: #dce3ec;
             cursor: pointer;
         }
+        .vod-list div {
+            text-decoration: none;
+            color: #d0e0e5;
+            cursor: pointer;
+            font-weight: normal;
+        }
         #video-container {
             display: none;
             position: fixed;
@@ -117,7 +123,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             //max-width: calc(40% - 10px);
             //max-height: calc(20% - 10px);
             //max-width: calc(340px - 10px);
-            max-width: calc(100% - 20px);
+            max-width: calc(100% - 140px);
             margin: 20px auto;
         }
         .tiles-container {
@@ -152,7 +158,8 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             width: 50%;
         }
         .tile:hover {
-            transform: scale(1.05);
+            transform: scale(1.75);
+            //transform: scale(1.05);
         }
         footer {
             background-color: #333;
@@ -201,7 +208,8 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($vod_list as $vod): ?>
                 <div class="tile" onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
                     <strong><?php echo htmlspecialchars($vod['title']); ?></strong>
-                    <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.ico') { echo $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%;'; } else { echo $cover_art_url . '\'); height:139px;width:139px;background-size:100% 100%;'; } ?>"></div>
+                    <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.png') { echo '/dash/' . $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%;'; } else { echo 'http://watch.exp.lan/favicon.ico' . '\'); height:139px;width:139px;background-size:100% 100%;'; } ?>"></div>
+                    <div style="font-size: 12pt;"><?php echo htmlspecialchars($vod['summary']); ?></div>
                     <!--<a><?php echo htmlspecialchars($vod['url']); ?></a>-->
                 </div>
                 <?php endforeach; ?>

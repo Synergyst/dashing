@@ -7,6 +7,7 @@ file_ext=".mp4"
 log_file_handbrake="/opt/stream/log/handbrake-transcode-job.log"
 log_file_media_check="/opt/stream/log/media-check.log"
 log_file_ffmpeg="/opt/stream/log/ffmpeg-transcode-job.log"
+log_file_dd="/opt/stream/log/dd-rip-job.log"
 dvd_file_name="$(lsdvd "$dvd_drive_path" |grep 'Disc Title:'|cut -f3 -d' ')"
 dash_vod_folder="$dvd_dash_path/VOD_$dvd_file_name"
 dvd_raw_path="$dash_vod_folder/raw"
@@ -35,7 +36,7 @@ if [ -n "$(ls -A $dash_vod_folder/ 2>/dev/null)" ]; then
 fi
 cd "$dvd_raw_path/"
 # NVENC transcoding, please do not use unless you have a reason to.
-dd status=progress if="$dvd_drive_path" of="$dvd_raw_path/$dvd_file_name.iso"
+dd status=progress if="$dvd_drive_path" of="$dvd_raw_path/$dvd_file_name.iso" >> "$log_file_dd"
 #HandBrakeCLI -i "$dvd_drive_path" --main-feature --preset 'H.265 NVENC 1080p' --output "$dvd_file_name_file_ext_with_path" >> "$log_file_handbrake"
 echo "ssh 192.168.168.170 HandBrakeCLI -i \"$dvd_raw_path/$dvd_file_name.iso\" --main-feature --preset \"H.265\\ NVENC\\ 1080p\" --output \"$dvd_file_name_file_ext_with_path\" >> \"$log_file_handbrake\""
 ssh 192.168.168.170 HandBrakeCLI -i "$dvd_raw_path/$dvd_file_name.iso" --main-feature --preset "H.265\ NVENC\ 1080p" --output "$dvd_file_name_file_ext_with_path" >> "$log_file_handbrake"

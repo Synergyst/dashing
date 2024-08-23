@@ -27,15 +27,19 @@ foreach ($folders as $folder) {
             // Construct the URL
             $url = $base_url . $folder . '/watch.mpd';
 
-            $cover_art_url = htmlspecialchars("http://watch.exp.lan/favicon.ico");
+            $cover_art_url = htmlspecialchars("http://watch.exp.lan/favicon.png");
             //$cover_art_url = "";
 
             $summary = "";
 
+            $dash_dir = $dir;
+            $vod_dir = $dash_dir . "/" . $folder;
+
             //echo $title . "\n" . $url . "\n" . $cover_art_url . "\n\n";
+            //echo $title . "\n" . $url . "\n" . $cover_art_url . "\n" . $dash_dir . "\n\n";
 
             // Add to the VOD list
-            $vod_list[] = array('title' => $title, 'url' => $url, 'cover_art_url' => $cover_art_url, 'summary' => $summary);
+            $vod_list[] = array('title' => $title, 'url' => $url, 'cover_art_url' => $cover_art_url, 'summary' => $summary, 'dash_dir' => $dash_dir, 'vod_dir' => $vod_dir);
         }
     }
 }
@@ -52,17 +56,21 @@ $db->exec("CREATE TABLE IF NOT EXISTS vod_urls (
     title TEXT, 
     url TEXT UNIQUE, 
     cover_art_url TEXT, 
-    summary TEXT
+    summary TEXT, 
+    dash_dir TEXT, 
+    vod_dir TEXT
 )");
 
 // Insert VODs into the database
-$stmt = $db->prepare("INSERT OR IGNORE INTO vod_urls (title, url, cover_art_url, summary) VALUES (:title, :url, :cover_art_url, :summary)");
+$stmt = $db->prepare("INSERT OR IGNORE INTO vod_urls (title, url, cover_art_url, summary, dash_dir, vod_dir) VALUES (:title, :url, :cover_art_url, :summary, :dash_dir, :vod_dir)");
 
 foreach ($vod_list as $vod) {
     $stmt->bindParam(':title', $vod['title']);
     $stmt->bindParam(':url', $vod['url']);
     $stmt->bindParam(':cover_art_url', $vod['cover_art_url']);
     $stmt->bindParam(':summary', $vod['summary']);
+    $stmt->bindParam(':dash_dir', $vod['dash_dir']);
+    $stmt->bindParam(':vod_dir', $vod['vod_dir']);
     $stmt->execute();
     //echo $vod['title'] . "\n" . $vod['url'] . "\n" . $vod['cover_art_url'] . "\n\n";
 }
