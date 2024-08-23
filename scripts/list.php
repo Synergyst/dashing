@@ -4,7 +4,6 @@ $dir = '/opt/stream/dash';
 
 // Base URL
 $base_url = 'http://watch.exp.lan/dash/';
-//$base_url = 'http://yoyo.synergyst.club/dash/';
 
 // Array to store VOD data
 $vod_list = array();
@@ -20,18 +19,23 @@ foreach ($folders as $folder) {
         if (file_exists($dir . '/' . $folder . '/watch.mpd')) {
             // Extract title by removing 'VOD_'
             $title = substr($folder, 4);
+            $title = str_replace("_", " ", $title);
+            $title = strtolower($title);
+            $title = ucwords($title);
+            $title = htmlspecialchars($title);
 
             // Construct the URL
             $url = $base_url . $folder . '/watch.mpd';
 
-            $cover_art = "";
-
-            $cover_art_url = "http://watch.exp.lan/favicon.ico";
+            $cover_art_url = htmlspecialchars("http://watch.exp.lan/favicon.ico");
+            //$cover_art_url = "";
 
             $summary = "";
 
+            //echo $title . "\n" . $url . "\n" . $cover_art_url . "\n\n";
+
             // Add to the VOD list
-            $vod_list[] = array('title' => $title, 'url' => $url, 'cover_art' => $cover_art, 'cover_art_url' => $cover_art_url, 'summary' => $summary);
+            $vod_list[] = array('title' => $title, 'url' => $url, 'cover_art_url' => $cover_art_url, 'summary' => $summary);
         }
     }
 }
@@ -47,22 +51,23 @@ $db->exec("CREATE TABLE IF NOT EXISTS vod_urls (
     id INTEGER PRIMARY KEY, 
     title TEXT, 
     url TEXT UNIQUE, 
-    cover_art TEXT, 
-    covert_art_url TEXT, 
+    cover_art_url TEXT, 
     summary TEXT
 )");
 
 // Insert VODs into the database
-$stmt = $db->prepare("INSERT OR IGNORE INTO vod_urls (title, url, cover_art, covert_art_url, summary) VALUES (:title, :url, :cover_art, :covert_art_url, :summary)");
+$stmt = $db->prepare("INSERT OR IGNORE INTO vod_urls (title, url, cover_art_url, summary) VALUES (:title, :url, :cover_art_url, :summary)");
 
 foreach ($vod_list as $vod) {
     $stmt->bindParam(':title', $vod['title']);
     $stmt->bindParam(':url', $vod['url']);
-    $stmt->bindParam(':cover_art', $vod['cover_art']);
     $stmt->bindParam(':cover_art_url', $vod['cover_art_url']);
     $stmt->bindParam(':summary', $vod['summary']);
     $stmt->execute();
+    //echo $vod['title'] . "\n" . $vod['url'] . "\n" . $vod['cover_art_url'] . "\n\n";
 }
 
+//print_r($vod_list);
 //echo "VODs stored in the database.";
+
 ?>

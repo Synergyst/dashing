@@ -4,7 +4,7 @@ $playlist_file = '/opt/stream/dash/playlist.xspf';
 // Connect to the SQLite database
 $db = new PDO('sqlite:/opt/stream/db/database.db');
 // Query to retrieve VOD entries from the database
-$stmt = $db->query("SELECT title, url FROM vod_urls");
+$stmt = $db->query("SELECT title, url, cover_art_url, summary FROM vod_urls");
 $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Start the VLC playlist content
 $playlist_content = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
@@ -34,4 +34,5 @@ $playlist_content .= '  </extension>' . "\n";
 $playlist_content .= '</playlist>' . "\n";
 // Write the playlist content to the file
 file_put_contents($playlist_file, $playlist_content);
+//print_r($playlist_content);
 ?>

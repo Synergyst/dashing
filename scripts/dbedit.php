@@ -128,7 +128,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 }
 
 // Blacklisted columns that cannot be deleted
-$blacklisted_columns = ['id', 'title', 'url', 'summary', 'cover_art', 'cover_art_url'];
+$blacklisted_columns = ['id', 'title', 'url', 'cover_art_url', 'summary'];
 
 // Handle deletion of a column
 if (isset($_GET['action']) && $_GET['action'] == 'delete_column') {
@@ -171,7 +171,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <form method="get" action="">
     <input type="hidden" name="action" value="save">
     <input type="hidden" name="id" value="<?php echo isset($_GET['id']) ? htmlspecialchars($_GET['id']) : ''; ?>">
-    
+
     <?php foreach ($columns as $column): ?>
         <?php if ($column['name'] != 'id'): ?>
             <label><?php echo htmlspecialchars($column['name']); ?>: 
