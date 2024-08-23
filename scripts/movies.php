@@ -79,7 +79,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 15px;
             border: 1px solid #2b2d31;
             border-radius: 5px;
-            cursor: pointer; /* Add this line to indicate clickability */
+            cursor: pointer; // Add this line to indicate clickability
         }
         .vod-list a {
             text-decoration: none;
@@ -113,23 +113,30 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 20px;
         }
         main {
-            max-width: 800px;
+            //max-width: 800px;
+            //max-width: calc(40% - 10px);
+            //max-height: calc(20% - 10px);
+            //max-width: calc(340px - 10px);
+            max-width: calc(100% - 20px);
             margin: 20px auto;
         }
         .tiles-container {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            justify-content: center;
         }
         .tile {
-            flex: 1 0 300px;
+            max-width: 139px;
+            max-height: 209px;
+            //flex: 1 1 300px;
+            flex: 1 1 calc(139px - 10px);
             background-color: #313338;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            //padding: 20px;
             padding-left: 10px;
-            padding-right: 5px;
+            padding-right: 10px;
             padding-top: 10px;
-            padding-bottom: 10px;
+            padding-bottom: 30px;
             border-radius: 10px;
             transition: transform 0.3s ease-in-out;
 
@@ -137,7 +144,8 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             border: 1px solid #2b2d31;
             cursor: pointer;
             text-align: center;
-            word-wrap: normal;
+            //word-wrap: normal;
+            word-wrap: break-word;
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -159,6 +167,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </style>
 </head>
 <body>
+
     <div class="site-header-title">
         <h1><a href="/watch">VOD Library</a></h1>
         <h3>(VLC playlist URL: <a id="playlist-link" href="/playlist">/playlist</a>)</h3>
@@ -176,6 +185,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         </script>
     </div>
+
     <div class="search-container">
         <form method="GET" action="">
             <input type="text" name="search" placeholder="Search VODs..." value="<?php echo htmlspecialchars($search); ?>">
@@ -184,23 +194,25 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
 
-    <main>
-        <section class="tiles-container">
-        <ul class="vod-list">
-        <?php if (count($vod_list) > 0): ?>
-            <?php foreach ($vod_list as $vod): ?>
-            <div class="tile" onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
-                <strong><?php echo htmlspecialchars($vod['title']); ?></strong><br>
-                <!--<a><?php echo htmlspecialchars($vod['url']); ?></a>-->
-                <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.ico') { echo $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%;'; } else { echo $cover_art_url . '\'); height:139px;width:139px;background-size:100% 100%;'; } ?>"></div>
-            </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <li>No VODs found.</li>
-        <?php endif; ?>
-        </ul>
-        </section>
-    </main>
+    <div class="vod-list">
+        <main>
+            <section class="tiles-container">
+            <?php if (count($vod_list) > 0): ?>
+                <?php foreach ($vod_list as $vod): ?>
+                <div class="tile" onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
+                    <strong><?php echo htmlspecialchars($vod['title']); ?></strong>
+                    <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.ico') { echo $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%;'; } else { echo $cover_art_url . '\'); height:139px;width:139px;background-size:100% 100%;'; } ?>"></div>
+                    <!--<a><?php echo htmlspecialchars($vod['url']); ?></a>-->
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="tile">
+                    <strong>No VODs found!</strong>
+                </div>
+            <?php endif; ?>
+            </section>
+        </main>
+    </div>
 
 
 
@@ -225,5 +237,6 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
         }
     </script>
+
 </body>
 </html>
