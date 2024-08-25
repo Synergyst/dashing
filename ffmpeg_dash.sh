@@ -53,8 +53,7 @@ cd "$dash_vod_folder/"
 #ssh 192.168.168.170 ffmpeg -y -vsync 0 -i "$dvd_file_name_file_ext_with_path" -c:v hevc -c:a aac -f dash "$dash_vod_folder/watch.mpd" >> "$log_file_ffmpeg" && sleep 10 && eject "$dvd_drive_path"
 # H264_NVENC, Nvidia-accelerated transcoding. Ignore and use above options if using no GPU!
 echo "ssh 192.168.168.170 ffmpeg -y -vsync 0 -i \"$dvd_file_name_file_ext_with_path\" -c:v h264_nvenc -c:a aac -f dash \"$dash_vod_folder/watch.mpd\" >> \"$log_file_ffmpeg\" && sleep 10 && eject \"$dvd_drive_path\""
-ssh 192.168.168.170 ffmpeg -y -vsync 0 -i "$dvd_file_name_file_ext_with_path" -c:v h264_nvenc -c:a aac -f dash "$dash_vod_folder/watch.mpd" >> "$log_file_ffmpeg" && sleep 10 && eject "$dvd_drive_path"
-read temp
+set +e ; ssh 192.168.168.170 ffmpeg -y -vsync 0 -i "$dvd_file_name_file_ext_with_path" -c:v h264_nvenc -c:a aac -f dash "$dash_vod_folder/watch.mpd" >> "$log_file_ffmpeg" ; (echo "Exit code: $?" ; sleep 10 ; ssh 192.168.168.163 eject "$dvd_drive_path" ; read temp)
 # H265_NVENC, Nvidia-accelerated transcoding. Ignore and use above options if using no GPU!
 #ssh 192.168.168.170 ffmpeg -y -vsync 0 -i "$dvd_file_name_file_ext_with_path" -c:v h265_nvenc -c:a aac -f dash "$dash_vod_folder/watch.mpd" >> "$log_file_ffmpeg" && sleep 10 && eject "$dvd_drive_path"
 # HEVC_NVENC, Nvidia-accelerated transcoding. Ignore and use above options if using no GPU!

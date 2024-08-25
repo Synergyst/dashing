@@ -9,6 +9,8 @@ $playlist_file = $base_dash_path . 'playlist.xspf';
 $db = new PDO('sqlite:/opt/stream/db/database.db');
 // Path to thumb-url-scraper.sh
 $thumb_url_scraper_exec = "/opt/stream/scripts/thumb-url-scraper.sh '";
+// Path to summary-scraper.sh
+$summary_scraper_exec = "/opt/stream/scripts/summary-scraper.sh '";
 // Query to retrieve VOD entries from the database
 $stmt = $db->query("SELECT title, url, cover_art_url, summary, vod_dir FROM vod_urls");
 $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -38,6 +40,21 @@ foreach ($vod_list as $vod) {
             }
         }
     }
+    if (htmlspecialchars($vod['summary']) == "") {
+        if (!(str_contains(htmlspecialchars($vod['title']), 'Bonus') || str_contains(htmlspecialchars($vod['title']), 'Disc') || str_contains(htmlspecialchars($vod['title']), 'Bloopers'))) {
+            $full_cmd_str = $summary_scraper_exec . htmlspecialchars($vod['title']) . "'";
+            //echo $full_cmd_str;
+            $cmd_exec_out = shell_exec($full_cmd_str);
+            //echo $cmd_exec_out;
+            if (!empty($cmd_exec_out)) {
+                // Update the database with the new cover_art_url using a prepared statement
+                $update_stmt = $db->prepare("UPDATE vod_urls SET summary = :summary WHERE title = :title");
+                $update_stmt->execute([':summary' => $cmd_exec_out, ':title' => $vod['title']]);
+                $vod['summary'] = $cmd_exec_out; // Update the $vod array with the new summary
+            }
+        }
+    }
+    $playlist_content .= '      <info>' . htmlspecialchars($vod['summary']) . '</info>' . "\n";
     $playlist_content .= '      <image>' . htmlspecialchars($vod['cover_art_url']) . '</image>' . "\n";
     $playlist_content .= '      <trackNum>' . $db_position . '</trackNum>' . "\n";
     $playlist_content .= '      <extension application="http://www.videolan.org/vlc/playlist/0">' . "\n";

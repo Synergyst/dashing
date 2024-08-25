@@ -67,8 +67,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             cursor: pointer;
         }
         .vod-list {
-            //max-width: 600px;
-            max-width: 100%;
+            max-width: 65%;
             margin: 0 auto;
             padding: 0;
             list-style-type: none;
@@ -76,7 +75,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .vod-list li {
             background-color: #313338;
             margin-bottom: 10px;
-            padding: 15px;
+            padding: 20px;
             border: 1px solid #2b2d31;
             border-radius: 5px;
             cursor: pointer; // Add this line to indicate clickability
@@ -90,6 +89,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             text-decoration: none;
             color: #dce3ec;
             cursor: pointer;
+            font-size: 14pt;
         }
         .vod-list div {
             text-decoration: none;
@@ -129,7 +129,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .tiles-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 20px;
             justify-content: center;
         }
         .tile {
@@ -142,13 +142,13 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding-left: 10px;
             padding-right: 10px;
             padding-top: 10px;
-            padding-bottom: 70px;
+            padding-bottom: 85px;
             //padding-bottom: 20px;
             //padding-bottom: 100px;
             border-radius: 10px;
             transition: transform 0.3s ease-in-out;
 
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             border: 1px solid #2b2d31;
             cursor: pointer;
             text-align: center;
@@ -177,6 +177,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             display: flex;
             align-items: flex-end;*/
             margin-bottom: 10px;
+            border-radius: 4px;
         }
         /*.vod-list-img:hover {
             height: 256px;
@@ -219,10 +220,9 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($vod_list as $vod): ?>
                 <div class="tile" onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
                     <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.png') { echo $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%; background-position: 0% 100%; background-repeat: no-repeat;'; } else { echo 'http://watch.exp.lan/favicon.ico' . '\'); height:139px;width:139px;background-size:100% 100%; background-position: 0% 100%; background-repeat: no-repeat;'; } ?>"></div>
-                    <!--<div style="background: #313338 url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.png') { echo '/dash/' . $cover_art_url . '\') bottom center no-repeat;height:209px;width:139px;background-size:100% 100%;'; } else { echo 'http://watch.exp.lan/favicon.ico' . '\') bottom center no-repeat; height:139px;width:139px;background-size:100% 100%;'; } ?>"></div>-->
-                    <div style="font-size: 12pt;"><?php echo htmlspecialchars($vod['summary']); ?></div>
-                    <!--<a><?php echo htmlspecialchars($vod['url']); ?></a>-->
                     <strong><?php echo htmlspecialchars($vod['title']); ?></strong>
+                    <!--<div style="font-size: 12pt;"><?php echo htmlspecialchars($vod['summary']); ?></div>-->
+                    <!--<a><?php echo htmlspecialchars($vod['url']); ?></a>-->
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
