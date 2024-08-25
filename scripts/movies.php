@@ -28,9 +28,12 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            //margin: 20px;
-            padding: 0;
+            margin: 20px;
+            margin-top: 0px;
+            margin-bottom: 20px;
+            padding: 20px;
+            padding-top: 0px;
+            padding-bottom: 20px;
             background-color: #1e1f22;
         }
         h1 {
@@ -51,7 +54,9 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         .search-container {
             text-align: center;
-            margin-bottom: 20px;
+            //margin-bottom: 20px;
+            margin-bottom: 0px;
+            padding-bottom: 0px;
         }
         .search-container input[type="text"] {
             padding: 10px;
@@ -67,7 +72,7 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             cursor: pointer;
         }
         .vod-list {
-            max-width: 65%;
+            max-width: 60%;
             margin: 0 auto;
             padding: 0;
             list-style-type: none;
@@ -119,35 +124,42 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 20px;
         }
         main {
-            //max-width: 800px;
-            //max-width: calc(40% - 10px);
-            //max-height: calc(20% - 10px);
-            //max-width: calc(340px - 10px);
-            max-width: calc(100% - 140px);
-            margin: 20px auto;
+            padding-top: 0px;
+            padding-bottom: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
         }
         .tiles-container {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
+
+            position: relative;
+
+            padding-left: 0px;
+            padding-right: 0px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin-left: 0px;
+            margin-right: 0px;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         .tile {
             max-width: 139px;
             max-height: 209px;
-            //flex: 1 1 300px;
             flex: 1 1 calc(139px - 10px);
             background-color: #313338;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding-left: 10px;
-            padding-right: 10px;
-            padding-top: 10px;
-            padding-bottom: 85px;
-            //padding-bottom: 20px;
-            //padding-bottom: 100px;
+            padding: 15px;
+            //padding-bottom: 85px;
             border-radius: 10px;
-            transition: transform 0.3s ease-in-out;
-
+            transition: transform 0.66s ease-in-out, width 0.66s ease-in-out; /* Add width transition */
             margin-bottom: 10px;
             border: 1px solid #2b2d31;
             cursor: pointer;
@@ -159,10 +171,30 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             width: 50%;
             background-position: 0% 100%;
             background-repeat: no-repeat;
+            //overflow: hidden; /* Ensure content doesn't overflow the tile */
+            //position: relative; /* Make sure the summary stays within the tile */
         }
         .tile:hover {
             transform: scale(1.75);
-            //transform: scale(1.05);
+
+            max-width: 800px;
+            width: 800px;
+            padding-right: 400px;
+        }
+        .vod-summary {
+            display: none; /* Hide the summary by default */
+            position: absolute;
+            top: 10px;
+            left: 170px; /* Position it to the right of the image */
+            color: #d0e0e5;
+            font-size: 12pt;
+            //width: 140px;
+            //width: 340px;
+            width: 440px;
+            text-align: left;
+        }
+        .tile:hover .vod-summary {
+            display: block; /* Show the summary on hover */
         }
         footer {
             background-color: #333;
@@ -171,13 +203,20 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 10px;
         }
         .vod-list-img {
-            /*background-position: 0% 100%;
+            background-position: 100% 100%;
+            background-size: 100% 100%;
             background-repeat: no-repeat;
             vertical-align: bottom;
             display: flex;
-            align-items: flex-end;*/
+            align-items: flex-end;
             margin-bottom: 10px;
             border-radius: 4px;
+            padding-left: 0px;
+            padding-right: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+            height: 239px;
+            width: 139px;
         }
         /*.vod-list-img:hover {
             height: 256px;
@@ -219,11 +258,13 @@ $vod_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php if (count($vod_list) > 0): ?>
                 <?php foreach ($vod_list as $vod): ?>
                 <div class="tile" onclick="playVideo('<?php echo htmlspecialchars($vod['url']); ?>')">
-                    <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.png') { echo $cover_art_url . '\');height:209px;width:139px;background-size:100% 100%; background-position: 0% 100%; background-repeat: no-repeat;'; } else { echo 'http://watch.exp.lan/favicon.ico' . '\'); height:139px;width:139px;background-size:100% 100%; background-position: 0% 100%; background-repeat: no-repeat;'; } ?>"></div>
-                    <strong><?php echo htmlspecialchars($vod['title']); ?></strong>
-                    <!--<div style="font-size: 12pt;"><?php echo htmlspecialchars($vod['summary']); ?></div>-->
+                    <div class="vod-list-img" style="background-image:url('<?php $cover_art_url = htmlspecialchars($vod['cover_art_url']); if ($cover_art_url != 'http://watch.exp.lan/favicon.png') { echo $cover_art_url . '\');height:209px;width:139px;'; } else { echo 'http://watch.exp.lan/favicon.ico' . '\'); height:139px;width:139px;'; } ?>"></div>
+                    <div class="vod-summary">
+                        <strong><?php echo htmlspecialchars($vod['title']); ?></strong>
+                        <div><?php echo htmlspecialchars($vod['summary']); ?></div>
+                    </div>
                     <!--<a><?php echo htmlspecialchars($vod['url']); ?></a>-->
-                </div>
+                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="tile">
